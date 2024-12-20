@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Santé</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #4caf50;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+        }
+
+        nav {
+            margin: 20px 0;
+        }
+
+        nav button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        nav button:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            display: none;
+            padding: 20px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            width: 80%;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #1e88e5;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header>Calculateur de Santé</header>
+
+    <nav>
+        <button onclick="showSection('imc')">IMC</button>
+        <button onclick="showSection('fcm')">FCM</button>
+        <button onclick="showSection('tmb')">TMB</button>
+    </nav>
+
+    <div id="imc" class="container">
+        <h2>Calcul de l'IMC</h2>
+        <input type="number" id="poidsImc" placeholder="Poids (kg)">
+        <input type="number" id="tailleImc" placeholder="Taille (cm)">
+        <button onclick="calculerIMC()">Calculer l'IMC</button>
+        <div class="result" id="resultImc"></div>
+    </div>
+
+    <div id="fcm" class="container">
+        <h2>Calcul de la FCM</h2>
+        <input type="number" id="ageFcm" placeholder="Âge (années)">
+        <button onclick="calculerFCM()">Calculer la FCM</button>
+        <div class="result" id="resultFcm"></div>
+    </div>
+
+    <div id="tmb" class="container">
+        <h2>Calcul du TMB</h2>
+        <input type="number" id="poidsTmb" placeholder="Poids (kg)">
+        <input type="number" id="tailleTmb" placeholder="Taille (cm)">
+        <input type="number" id="ageTmb" placeholder="Âge (années)">
+        <select id="sexeTmb">
+            <option value="">Sélectionnez le sexe</option>
+            <option value="Homme">Homme</option>
+            <option value="Femme">Femme</option>
+        </select>
+        <button onclick="calculerTMB()">Calculer le TMB</button>
+        <div class="result" id="resultTmb"></div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.container');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function calculerIMC() {
+            const poids = parseFloat(document.getElementById('poidsImc').value);
+            const taille = parseFloat(document.getElementById('tailleImc').value) / 100;
+            if (isNaN(poids) || isNaN(taille)) {
+                alert('Veuillez entrer des valeurs valides pour le poids et la taille.');
+                return;
+            }
+            const imc = poids / (taille * taille);
+            let interpretation = '';
+            if (imc < 18.5) {
+                interpretation = "Insuffisance pondérale";
+            } else if (imc < 24.9) {
+                interpretation = "Poids normal";
+            } else if (imc < 29.9) {
+                interpretation = "Surpoids";
+            } else {
+                interpretation = "Obésité";
+            }
+            document.getElementById('resultImc').innerText = `IMC: ${imc.toFixed(2)}\n${interpretation}`;
+        }
+
+        function calculerFCM() {
+            const age = parseInt(document.getElementById('ageFcm').value);
+            if (isNaN(age)) {
+                alert('Veuillez entrer une valeur valide pour l\'âge.');
+                return;
+            }
+            const fcm = 220 - age;
+            document.getElementById('resultFcm').innerText = `FCM: ${fcm} bpm`;
+        }
+
+        function calculerTMB() {
+            const poids = parseFloat(document.getElementById('poidsTmb').value);
+            const taille = parseFloat(document.getElementById('tailleTmb').value);
+            const age = parseInt(document.getElementById('ageTmb').value);
+            const sexe = document.getElementById('sexeTmb').value;
+
+            if (isNaN(poids) || isNaN(taille) || isNaN(age) || !sexe) {
+                alert('Veuillez entrer des valeurs valides pour tous les champs.');
+                return;
+            }
+
+            let tmb;
+            if (sexe === 'Homme') {
+                tmb = 88.36 + (13.4 * poids) + (4.8 * taille) - (5.7 * age);
+            } else if (sexe === 'Femme') {
+                tmb = 447.6 + (9.2 * poids) + (3.1 * taille) - (4.3 * age);
+            } else {
+                alert('Veuillez sélectionner un sexe valide.');
+                return;
+            }
+            document.getElementById('resultTmb').innerText = `TMB: ${tmb.toFixed(2)} kcal/jour`;
+        }
+
+        // Afficher la section IMC par défaut
+        showSection('imc');
+    </script>
+</body>
+
+</html>
